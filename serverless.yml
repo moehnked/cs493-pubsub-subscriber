@@ -1,0 +1,30 @@
+
+service: sqs-subscriber
+# app and org for use with dashboard.serverless.com
+app: sqs-subscriber
+org: moehnked
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "sqs:SendMessage"
+        - "sqs:ReceiveMessage"
+        - "sqs:GetQueueUrl"
+      Resource: "arn:aws:sqs:us-east-1:850459610895:test-queue.fifo"
+    - Effect: "Allow"
+      Action:
+        - "sqs:ListQueues"
+      Resource: "arn:aws:sqs:us-east-1:850459610895:*"
+
+
+functions:
+  reciever:
+    handler: handler.handler
+    events:
+      - sqs:
+          arn: arn:aws:sqs:us-east-1:850459610895:test-queue.fifo
+          batchSize: 1
